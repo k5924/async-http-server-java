@@ -20,7 +20,7 @@ public final class FileResponseHandler implements ResponseHandler{
         final var contents = uri.split("/");
         if (contents.length > 2) {
             final var fileName = contents[2];
-            final var filePath = Paths.get("/tmp/" + fileName);
+            final var filePath = Paths.get("/tmp/data/codecrafters.io/http-server-tester/" + fileName);
             System.out.println("File path is " + filePath);
             try {
                 final var fileChannel = AsynchronousFileChannel.open(filePath, StandardOpenOption.READ);
