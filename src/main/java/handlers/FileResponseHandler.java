@@ -21,6 +21,7 @@ public final class FileResponseHandler implements ResponseHandler{
         if (contents.length > 2) {
             final var fileName = contents[2];
             final var filePath = Paths.get("/tmp/" + fileName);
+            System.out.println("File path is " + filePath);
             try {
                 final var fileChannel = AsynchronousFileChannel.open(filePath, StandardOpenOption.READ);
                 final var fileBuffer = ByteBuffer.allocate((int) fileChannel.size());
