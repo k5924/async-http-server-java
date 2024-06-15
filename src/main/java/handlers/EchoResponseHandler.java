@@ -34,8 +34,8 @@ public final class EchoResponseHandler implements ResponseHandler{
                     final var gzipOutputStream = new GZIPOutputStream(outputStream);
                     gzipOutputStream.write(response.getBytes(StandardCharsets.UTF_8));
                     gzipOutputStream.close();
-                    final var encodedResponse = outputStream.toString();
-                    final var response_to_encode = GZIP_ENCODING_RESPONSE + encodedResponse.length() + END_OF_MESSAGE + encodedResponse;
+                    final var gzipHex = bytesToHex(outputStream.toByteArray());
+                    final var response_to_encode = GZIP_ENCODING_RESPONSE + gzipHex.length() + END_OF_MESSAGE + gzipHex;
                     byteBuffer.put(response_to_encode.getBytes(StandardCharsets.UTF_8));
                 } catch (final IOException e) {
                     System.err.println("Unable to encode data with gzip encoder: " + e.getMessage());
@@ -49,5 +49,17 @@ public final class EchoResponseHandler implements ResponseHandler{
         }
         byteBuffer.flip();
         clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
+    }
+
+    private static String bytesToHex(final byte[] bytes) {
+        final StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }
