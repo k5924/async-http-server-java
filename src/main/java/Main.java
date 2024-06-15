@@ -1,3 +1,5 @@
+import utils.BufferPool;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,7 +9,8 @@ public final class Main {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.out.println("Logs from your program will appear here!");
 
-    final var server = new Server(4221);
+    final var bufferPool = new BufferPool(4, 1024);
+    final var server = new Server(4221, bufferPool);
     try {
       server.startServer();
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {
