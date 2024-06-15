@@ -21,7 +21,7 @@ public final class RequestHandler implements CompletionHandler<Integer, ByteBuff
         System.out.println("Message on request is " + message);
         byteBuffer.clear();
         byteBuffer.put("HTTP/1.1 200 OK\r\n\r\n".getBytes(StandardCharsets.UTF_8));
-        clientChannel.write(byteBuffer, byteBuffer, new CompletedHandler<>(clientChannel, byteBuffer));
+        clientChannel.write(byteBuffer, null, new CompletedHandler<>(clientChannel, byteBuffer));
     }
 
     @Override
