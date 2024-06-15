@@ -18,7 +18,7 @@ public final class AcceptHandler implements CompletionHandler<AsynchronousSocket
 
         serverSocketChannel.accept(null, this);
         final var byteBuffer = ByteBuffer.allocate(1024);
-        clientChannel.read(byteBuffer, byteBuffer, new RequestHandler(clientChannel, byteBuffer));
+        clientChannel.read(byteBuffer, null, new RequestHandler(clientChannel, byteBuffer));
     }
 
     @Override

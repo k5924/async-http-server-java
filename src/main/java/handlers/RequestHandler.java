@@ -5,28 +5,45 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
 
-public final class RequestHandler implements CompletionHandler<Integer, ByteBuffer> {
+public final class RequestHandler implements CompletionHandler<Integer, Void> {
+
+    private static final String OK_RESPONSE = "HTTP/1.1 200 0K\r\n\r\n";
+    private static final byte[] OK_RESPONSE_BYTES = OK_RESPONSE.getBytes(StandardCharsets.UTF_8);
     private final AsynchronousSocketChannel clientChannel;
     private final ByteBuffer byteBuffer;
 
-    public RequestHandler(final AsynchronousSocketChannel clientChannel, final ByteBuffer byteBuffer) {
+    public RequestHandler(final AsynchronousSocketChannel clientChannel,
+                          final ByteBuffer byteBuffer) {
         this.clientChannel = clientChannel;
         this.byteBuffer = byteBuffer;
     }
 
     @Override
-    public void completed(final Integer result, final ByteBuffer attachment) {
-        attachment.flip();
-        final var message = StandardCharsets.UTF_8.decode(attachment);
-        System.out.println("Message on request is " + message);
+    public void completed(final Integer bytesRead, final Void attachment) {
+        if (bytesRead == -1) {
+            try {
+                clientChannel.close();
+            } catch (final Exception e) {
+                System.err.println("error thrown when closing client channel: " + e.getMessage());
+            }
+            return;
+        }
+
+        byteBuffer.flip();
+        final var data = new byte[bytesRead];
+        byteBuffer.get(data);
+
+        final var request = new String(data, StandardCharsets.UTF_8);
+        System.out.println("Request is: " + request);
+
         byteBuffer.clear();
-        byteBuffer.put("HTTP/1.1 200 OK\r\n\r\n".getBytes(StandardCharsets.UTF_8));
-        clientChannel.write(byteBuffer, null, new CompletedHandler<>(clientChannel, byteBuffer));
+        byteBuffer.put(OK_RESPONSE_BYTES);
+        byteBuffer.flip();
+        clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
     }
 
     @Override
-    public void failed(final Throwable exc, final ByteBuffer attachment) {
-        System.out.println("Failed to read request");
-
+    public void failed(Throwable exc, Void attachment) {
+        System.out.println("Failed to read request: " + exc.getMessage());
     }
 }
