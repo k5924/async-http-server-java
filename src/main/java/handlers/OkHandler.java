@@ -4,6 +4,7 @@ import utils.BufferPool;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.nio.charset.StandardCharsets;
 
 import static utils.Constants.OK_RESPONSE_BYTES;
 
@@ -22,6 +23,9 @@ public final class OkHandler implements CompletionHandler<Integer, ByteBuffer> {
 
     @Override
     public void completed(final Integer result, final ByteBuffer attachment) {
+        attachment.flip();
+        final var message = StandardCharsets.UTF_8.decode(attachment).toString();
+        System.out.println("Request from client is: " + message);
         byteBuffer.clear();
         byteBuffer.put(OK_RESPONSE_BYTES);
         byteBuffer.flip();
