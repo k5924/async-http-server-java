@@ -5,10 +5,9 @@ import parser.HttpRequestParser;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.nio.charset.StandardCharsets;
 
-import static utils.Constants.LEADING_SLASH;
-import static utils.Constants.NOT_FOUND_BYTES;
-import static utils.Constants.OK_RESPONSE_BYTES;
+import static utils.Constants.*;
 
 public final class RequestHandler implements CompletionHandler<Integer, Void> {
 
@@ -38,7 +37,16 @@ public final class RequestHandler implements CompletionHandler<Integer, Void> {
         byteBuffer.clear();
 
         if (request.uri().equals(LEADING_SLASH)) {
-            byteBuffer.put(OK_RESPONSE_BYTES);
+            byteBuffer.put(OK_RESPONSE_TERMINATION_BYTES);
+        } else if (request.uri().startsWith(ECHO_ENDPOINT)){
+            final var content = request.uri().split(LEADING_SLASH);
+            if (content.length > 2) {
+                final var response = content[2];
+                final var response_to_encode = OK_RESPONSE + CONTENT_TYPE + TEXT_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR + response.length() + END_OF_MESSAGE + response;
+                byteBuffer.put(response_to_encode.getBytes(StandardCharsets.UTF_8));
+            } else {
+                byteBuffer.put(OK_RESPONSE_TERMINATION_BYTES);
+            }
         } else {
             byteBuffer.put(NOT_FOUND_BYTES);
         }

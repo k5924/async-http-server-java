@@ -4,13 +4,11 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-import static utils.Constants.CRLF;
+import static utils.Constants.*;
 
 public final class HttpRequestParser {
 
     private static final String EMPTY_STRING = "";
-    private static final String HEADER_SEPARATOR = ": ";
-    private static final String CONTENT_LENGTH = "Content-Length";
     private static final String SPACE_CHARACTER = " ";
 
     public static HttpRequest parse(ByteBuffer byteBuffer) {
