@@ -34,8 +34,8 @@ public final class EchoResponseHandler implements ResponseHandler{
                     final var gzipOutputStream = new GZIPOutputStream(outputStream);
                     gzipOutputStream.write(response.getBytes(StandardCharsets.UTF_8));
                     gzipOutputStream.close();
-                    final var encodedBytes = Base64.getEncoder().encodeToString(outputStream.toByteArray());
-                    final var response_to_encode = GZIP_ENCODING_RESPONSE + encodedBytes.length() + END_OF_MESSAGE + encodedBytes;
+                    final var encodedResponse = outputStream.toString();
+                    final var response_to_encode = GZIP_ENCODING_RESPONSE + encodedResponse.length() + END_OF_MESSAGE + encodedResponse;
                     byteBuffer.put(response_to_encode.getBytes(StandardCharsets.UTF_8));
                 } catch (final IOException e) {
                     System.err.println("Unable to encode data with gzip encoder: " + e.getMessage());
