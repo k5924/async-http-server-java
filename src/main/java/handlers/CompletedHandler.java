@@ -28,7 +28,7 @@ public final class CompletedHandler implements CompletionHandler<Integer, ByteBu
 
     @Override
     public void failed(final Throwable exc, final ByteBuffer attachment) {
-        System.out.println("Failed ot send response: " + exc.getMessage());
+        System.out.println("Failed to send response: " + exc.getMessage());
         setFinished();
     }
 
