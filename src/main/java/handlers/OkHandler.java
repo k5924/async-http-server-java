@@ -25,7 +25,7 @@ public final class OkHandler implements CompletionHandler<Integer, ByteBuffer> {
         byteBuffer.clear();
         byteBuffer.put(OK_RESPONSE_BYTES);
         byteBuffer.flip();
-        clientChannel.write(byteBuffer, null, new CompletedHandler(clientChannel, byteBuffer, bufferPool));
+        clientChannel.write(byteBuffer, byteBuffer, new CompletedHandler(clientChannel, byteBuffer, bufferPool));
     }
 
     @Override
