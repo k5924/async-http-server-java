@@ -42,6 +42,6 @@ public final class RequestHandler implements CompletionHandler<Integer, Void> {
 
     @Override
     public void failed(Throwable exc, Void attachment) {
-        System.out.println("Failed to read request: " + exc.getMessage());
+        System.err.println("Failed to read request: " + exc.getMessage());
     }
 }

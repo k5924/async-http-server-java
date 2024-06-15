@@ -13,7 +13,9 @@ public final class HandlerFactory {
             return new EchoResponseHandler(request.uri());
         } else if (request.uri().startsWith(USER_AGENT_ENDPOINT)) {
             return new UserAgentHandler(request.headers().getOrDefault(USER_AGENT_HEADER, EMPTY_STRING));
-        }else {
+        } else if (request.uri().startsWith(FILES_ENDPOINT)) {
+            return new FileResponseHandler(request.uri());
+        } else {
             return new NotFoundHandler();
         }
     }

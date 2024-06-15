@@ -13,6 +13,7 @@ public final class Constants {
     public static final String END_OF_MESSAGE = CRLF + CRLF;
     public static final String CONTENT_TYPE = "Content-Type: ";
     public static final String TEXT_CONTENT = "text/plain" + CRLF;
+    public static final String FILE_CONTENT = "application/octet-stream";
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String HEADER_SEPARATOR = ": ";
     public static final String OK_RESPONSE = HTTP_VERSION + " 200 OK" + CRLF;
@@ -23,7 +24,9 @@ public final class Constants {
     public static final String LEADING_SLASH = "/";
     public static final String ECHO_ENDPOINT = LEADING_SLASH + "echo";
     public static final String USER_AGENT_ENDPOINT = LEADING_SLASH + "user-agent";
+    public static final String FILES_ENDPOINT = LEADING_SLASH + "files";
     public static final String USER_AGENT_HEADER = "User-Agent";
     public static final String EMPTY_STRING = "";
     public static final String PLAIN_TEXT_RESPONSE = OK_RESPONSE + CONTENT_TYPE + TEXT_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR;
+    public static final String FILE_RESPONSE = OK_RESPONSE + CONTENT_TYPE + FILE_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR;
 }

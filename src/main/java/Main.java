@@ -9,12 +9,12 @@ public final class Main {
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {
         try {
           server.stopServer();
-        } catch (Exception e) {
-          e.printStackTrace();
+        } catch (final Exception e) {
+          System.err.println("Failed to stop the server because: " + e.getMessage());
         }
       }));
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (final Exception e) {
+      System.err.println("Failed to start the server because: " + e.getMessage());
     }
   }
 }

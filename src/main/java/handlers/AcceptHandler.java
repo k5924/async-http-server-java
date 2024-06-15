@@ -26,6 +26,6 @@ public final class AcceptHandler implements CompletionHandler<AsynchronousSocket
 
     @Override
     public void failed(final Throwable exc, final Void attachment) {
-        System.out.println("Failed to accept connection due to: " + exc.getMessage());
+        System.err.println("Failed to accept connection due to: " + exc.getMessage());
     }
 }

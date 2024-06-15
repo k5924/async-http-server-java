@@ -27,6 +27,6 @@ public final class FinishedHandler implements CompletionHandler<Integer, Void> {
 
     @Override
     public void failed(Throwable exc, Void attachment) {
-        System.out.println("Write failed: " + exc.getMessage());
+        System.err.println("Write failed: " + exc.getMessage());
     }
 }
