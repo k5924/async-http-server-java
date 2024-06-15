@@ -1,14 +1,17 @@
 package handlers;
 
+import parser.HttpRequestParser;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
-import java.nio.charset.StandardCharsets;
+
+import static utils.Constants.LEADING_SLASH;
+import static utils.Constants.NOT_FOUND_BYTES;
+import static utils.Constants.OK_RESPONSE_BYTES;
 
 public final class RequestHandler implements CompletionHandler<Integer, Void> {
 
-    private static final String OK_RESPONSE = "HTTP/1.1 200 OK\r\n\r\n";
-    private static final byte[] OK_RESPONSE_BYTES = OK_RESPONSE.getBytes(StandardCharsets.UTF_8);
     private final AsynchronousSocketChannel clientChannel;
     private final ByteBuffer byteBuffer;
 
@@ -29,15 +32,16 @@ public final class RequestHandler implements CompletionHandler<Integer, Void> {
             return;
         }
 
-        byteBuffer.flip();
-        final var data = new byte[bytesRead];
-        byteBuffer.get(data);
-
-        final var request = new String(data, StandardCharsets.UTF_8);
+        final var request = HttpRequestParser.parse(byteBuffer);
         System.out.println("Request is: " + request);
 
         byteBuffer.clear();
-        byteBuffer.put(OK_RESPONSE_BYTES);
+
+        if (request.uri().equals(LEADING_SLASH)) {
+            byteBuffer.put(OK_RESPONSE_BYTES);
+        } else {
+            byteBuffer.put(NOT_FOUND_BYTES);
+        }
         byteBuffer.flip();
         clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
     }
