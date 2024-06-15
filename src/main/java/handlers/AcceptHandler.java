@@ -20,7 +20,7 @@ public final class AcceptHandler implements CompletionHandler<AsynchronousSocket
     public void completed(final AsynchronousSocketChannel clientChannel, final Void attachment) {
 
         serverSocketChannel.accept(null, this);
-        clientChannel.write(null, null, new ReadRequestHandler(clientChannel, bufferPool));
+        clientChannel.read(null, null, new ReadRequestHandler(clientChannel, bufferPool));
     }
 
     @Override
