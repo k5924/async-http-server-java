@@ -1,4 +1,6 @@
 import handlers.AcceptHandler;
+import handlers.HandlerFactory;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousServerSocketChannel;
@@ -17,10 +19,11 @@ public final class Server {
     }
 
     public void startServer() throws Exception {
+        final var handlerFactory = new HandlerFactory();
         serverSocketChannel = AsynchronousServerSocketChannel.open();
         final var socketAddress = new InetSocketAddress(port);
         serverSocketChannel.bind(socketAddress);
-        serverSocketChannel.accept(null, new AcceptHandler(serverSocketChannel));
+        serverSocketChannel.accept(null, new AcceptHandler(serverSocketChannel, handlerFactory));
 
         executorService.submit(() -> {
             try {

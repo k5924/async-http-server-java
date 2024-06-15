@@ -22,4 +22,8 @@ public final class Constants {
     public static final byte[] NOT_FOUND_BYTES = NOT_FOUND.getBytes(StandardCharsets.UTF_8);
     public static final String LEADING_SLASH = "/";
     public static final String ECHO_ENDPOINT = LEADING_SLASH + "echo";
+    public static final String USER_AGENT_ENDPOINT = LEADING_SLASH + "user-agent";
+    public static final String USER_AGENT_HEADER = "User-Agent";
+    public static final String EMPTY_STRING = "";
+    public static final String PLAIN_TEXT_RESPONSE = OK_RESPONSE + CONTENT_TYPE + TEXT_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR;
 }

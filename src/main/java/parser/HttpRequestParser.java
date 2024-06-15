@@ -8,7 +8,6 @@ import static utils.Constants.*;
 
 public final class HttpRequestParser {
 
-    private static final String EMPTY_STRING = "";
     private static final String SPACE_CHARACTER = " ";
 
     public static HttpRequest parse(ByteBuffer byteBuffer) {

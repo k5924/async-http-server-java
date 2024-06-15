@@ -7,10 +7,13 @@ import java.nio.channels.CompletionHandler;
 
 public final class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, Void> {
     private final AsynchronousServerSocketChannel serverSocketChannel;
+    private final HandlerFactory handlerFactory;
 
-    public AcceptHandler(final AsynchronousServerSocketChannel serverSocketChannel) {
+    public AcceptHandler(final AsynchronousServerSocketChannel serverSocketChannel,
+                         final HandlerFactory handlerFactory) {
 
         this.serverSocketChannel = serverSocketChannel;
+        this.handlerFactory = handlerFactory;
     }
 
     @Override
@@ -18,7 +21,7 @@ public final class AcceptHandler implements CompletionHandler<AsynchronousSocket
 
         serverSocketChannel.accept(null, this);
         final var byteBuffer = ByteBuffer.allocate(1024);
-        clientChannel.read(byteBuffer, null, new RequestHandler(clientChannel, byteBuffer));
+        clientChannel.read(byteBuffer, null, new RequestHandler(clientChannel, byteBuffer, handlerFactory));
     }
 
     @Override
