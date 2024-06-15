@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 import static utils.Constants.OK_RESPONSE_BYTES;
 
-public final class OkHandler implements CompletionHandler<Integer, ByteBuffer> {
+public final class OkHandler implements CompletionHandler<Integer, Void> {
 
     private final AsynchronousSocketChannel clientChannel;
     private final BufferPool bufferPool;
@@ -22,17 +22,14 @@ public final class OkHandler implements CompletionHandler<Integer, ByteBuffer> {
     }
 
     @Override
-    public void completed(final Integer result, final ByteBuffer attachment) {
-        attachment.flip();
-        final var message = StandardCharsets.UTF_8.decode(attachment).toString();
-        System.out.println("Request from client is: " + message);
+    public void completed(final Integer result, final Void attachment) {
         byteBuffer.clear();
         byteBuffer.put(OK_RESPONSE_BYTES);
-        clientChannel.write(byteBuffer, byteBuffer, new CompletedHandler(clientChannel, byteBuffer, bufferPool));
+        clientChannel.write(byteBuffer, null, new CompletedHandler(clientChannel, byteBuffer, bufferPool));
     }
 
     @Override
-    public void failed(final Throwable exc, final ByteBuffer attachment) {
+    public void failed(final Throwable exc, final Void attachment) {
         System.out.println("Failed to send response: " + exc.getMessage());
     }
 }

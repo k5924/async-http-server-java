@@ -22,7 +22,7 @@ public final class AcceptHandler implements CompletionHandler<AsynchronousSocket
         serverSocketChannel.accept(null, this);
         try {
             final var byteBuffer = bufferPool.acquireBuffer();
-            clientChannel.write(byteBuffer, byteBuffer, new OkHandler(clientChannel, bufferPool, byteBuffer));
+            clientChannel.write(byteBuffer, null, new OkHandler(clientChannel, bufferPool, byteBuffer));
         } catch (final InterruptedException e) {
             System.err.println("Exception thrown on getting buffer: " + e.getMessage());
         }

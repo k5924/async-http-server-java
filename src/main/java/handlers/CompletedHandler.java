@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
-public final class CompletedHandler implements CompletionHandler<Integer, ByteBuffer> {
+public final class CompletedHandler implements CompletionHandler<Integer, Void> {
 
     private final AsynchronousSocketChannel clientChannel;
     private final ByteBuffer buffer;
@@ -22,12 +22,12 @@ public final class CompletedHandler implements CompletionHandler<Integer, ByteBu
     }
 
     @Override
-    public void completed(final Integer result, final ByteBuffer attachment) {
+    public void completed(final Integer result, final Void attachment) {
         setFinished();
     }
 
     @Override
-    public void failed(final Throwable exc, final ByteBuffer attachment) {
+    public void failed(final Throwable exc, final Void attachment) {
         System.out.println("Failed to send response: " + exc.getMessage());
         setFinished();
     }
