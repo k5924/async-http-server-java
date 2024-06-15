@@ -9,8 +9,7 @@ public final class Main {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.out.println("Logs from your program will appear here!");
 
-    final var bufferPool = new BufferPool(4, 1024);
-    final var server = new Server(4221, bufferPool);
+    final var server = new Server(4221);
     try {
       server.startServer();
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {

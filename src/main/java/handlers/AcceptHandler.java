@@ -1,31 +1,24 @@
 package handlers;
 
-import utils.BufferPool;
+import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 public final class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, Void> {
     private final AsynchronousServerSocketChannel serverSocketChannel;
-    private final BufferPool bufferPool;
 
-    public AcceptHandler(final AsynchronousServerSocketChannel serverSocketChannel,
-                         final BufferPool bufferPool) {
+    public AcceptHandler(final AsynchronousServerSocketChannel serverSocketChannel) {
 
         this.serverSocketChannel = serverSocketChannel;
-        this.bufferPool = bufferPool;
     }
 
     @Override
     public void completed(final AsynchronousSocketChannel clientChannel, final Void attachment) {
 
         serverSocketChannel.accept(null, this);
-        try {
-            final var byteBuffer = bufferPool.acquireBuffer();
-            clientChannel.write(byteBuffer, null, new OkHandler(clientChannel, bufferPool, byteBuffer));
-        } catch (final InterruptedException e) {
-            System.err.println("Exception thrown on getting buffer: " + e.getMessage());
-        }
+        final var byteBuffer = ByteBuffer.allocate(1024);
+        clientChannel.read(byteBuffer, byteBuffer, new RequestHandler(clientChannel, byteBuffer));
     }
 
     @Override
