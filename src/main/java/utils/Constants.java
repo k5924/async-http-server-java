@@ -13,7 +13,7 @@ public final class Constants {
     public static final String END_OF_MESSAGE = CRLF + CRLF;
     public static final String CONTENT_TYPE = "Content-Type: ";
     public static final String TEXT_CONTENT = "text/plain" + CRLF;
-    public static final String FILE_CONTENT = "application/octet-stream";
+    public static final String FILE_CONTENT = "application/octet-stream" + CRLF;
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String HEADER_SEPARATOR = ": ";
     public static final String OK_RESPONSE = HTTP_VERSION + " 200 OK" + CRLF;
