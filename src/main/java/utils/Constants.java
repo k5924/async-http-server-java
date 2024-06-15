@@ -30,4 +30,8 @@ public final class Constants {
     public static final String PLAIN_TEXT_RESPONSE = OK_RESPONSE + CONTENT_TYPE + TEXT_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR;
     public static final String FILE_RESPONSE = OK_RESPONSE + CONTENT_TYPE + FILE_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR;
     public static final String CREATED_RESPONSE = HTTP_VERSION + " 201 Created" + END_OF_MESSAGE;
+    public static final String ACCEPT_ENCODING_HEADER = "Accept-Encoding";
+    public static final String CONTENT_ENCODING = "Content-Encoding: ";
+    public static final String GZIP = "gzip";
+    public static final String GZIP_ENCODING_RESPONSE = OK_RESPONSE + CONTENT_ENCODING + GZIP + CONTENT_TYPE + TEXT_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR;
 }
