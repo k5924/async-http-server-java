@@ -40,6 +40,8 @@ public final class EchoResponseHandler implements ResponseHandler{
                     byteBuffer.put(encodedBytes);
                 } catch (final IOException e) {
                     System.err.println("Unable to encode data with gzip encoder: " + e.getMessage());
+                    final var response_to_encode = PLAIN_TEXT_RESPONSE + response.length() + END_OF_MESSAGE + response;
+                    byteBuffer.put(response_to_encode.getBytes(StandardCharsets.UTF_8));
                 }
             } else {
                 final var response_to_encode = PLAIN_TEXT_RESPONSE + response.length() + END_OF_MESSAGE + response;
