@@ -25,7 +25,7 @@ public final class EchoResponseHandler implements ResponseHandler{
         if (content.length > 2) {
             final var response = content[2];
             final String response_to_encode;
-            if (encoding.equals("gzip")) {
+            if (encoding.contains("gzip")) {
                 response_to_encode = GZIP_ENCODING_RESPONSE + response.length() + END_OF_MESSAGE + response;
             } else {
                 response_to_encode = PLAIN_TEXT_RESPONSE + response.length() + END_OF_MESSAGE + response;
