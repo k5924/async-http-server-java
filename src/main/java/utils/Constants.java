@@ -29,4 +29,5 @@ public final class Constants {
     public static final String EMPTY_STRING = "";
     public static final String PLAIN_TEXT_RESPONSE = OK_RESPONSE + CONTENT_TYPE + TEXT_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR;
     public static final String FILE_RESPONSE = OK_RESPONSE + CONTENT_TYPE + FILE_CONTENT + CONTENT_LENGTH + HEADER_SEPARATOR;
+    public static final String CREATED_RESPONSE = HTTP_VERSION + " 201 Created" + END_OF_MESSAGE;
 }
