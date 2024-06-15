@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.zip.GZIPOutputStream;
 
 import static utils.Constants.*;
@@ -33,8 +34,8 @@ public final class EchoResponseHandler implements ResponseHandler{
                     final var gzipOutputStream = new GZIPOutputStream(outputStream);
                     gzipOutputStream.write(response.getBytes(StandardCharsets.UTF_8));
                     gzipOutputStream.close();
-                    final var encodedBytes = outputStream.toByteArray();
-                    final var response_to_encode = GZIP_ENCODING_RESPONSE + encodedBytes.length + END_OF_MESSAGE + encodedBytes.toString();
+                    final var encodedBytes = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+                    final var response_to_encode = GZIP_ENCODING_RESPONSE + encodedBytes.length() + END_OF_MESSAGE + encodedBytes;
                     byteBuffer.put(response_to_encode.getBytes(StandardCharsets.UTF_8));
                 } catch (final IOException e) {
                     System.err.println("Unable to encode data with gzip encoder: " + e.getMessage());
