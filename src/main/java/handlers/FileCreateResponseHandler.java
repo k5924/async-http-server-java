@@ -30,7 +30,6 @@ public final class FileCreateResponseHandler implements ResponseHandler{
                 final var fileChannel = AsynchronousFileChannel.open(filePath, StandardOpenOption.CREATE,
                         StandardOpenOption.WRITE);
                 final var fileBuffer = ByteBuffer.wrap(body.getBytes(StandardCharsets.UTF_8));
-                fileBuffer.flip();
                 fileChannel.write(fileBuffer, 0, null,
                         new FileWriteHandler(byteBuffer, clientChannel, fileChannel));
             } catch (final Exception e) {
