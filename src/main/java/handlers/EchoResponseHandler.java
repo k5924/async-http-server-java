@@ -1,8 +1,11 @@
 package handlers;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPOutputStream;
 
 import static utils.Constants.*;
 import static utils.Constants.OK_RESPONSE_TERMINATION_BYTES;
@@ -24,13 +27,22 @@ public final class EchoResponseHandler implements ResponseHandler{
         final var content = uri.split(LEADING_SLASH);
         if (content.length > 2) {
             final var response = content[2];
-            final String response_to_encode;
             if (encoding.contains("gzip")) {
-                response_to_encode = GZIP_ENCODING_RESPONSE + response.length() + END_OF_MESSAGE + response;
+                final var outputStream = new ByteArrayOutputStream();
+                try {
+                    final var gzipOutputStream = new GZIPOutputStream(outputStream);
+                    gzipOutputStream.write(response.getBytes(StandardCharsets.UTF_8));
+                    gzipOutputStream.close();
+                    final var encodedBytes = outputStream.toByteArray();
+                    final var response_to_encode = GZIP_ENCODING_RESPONSE + encodedBytes.length + END_OF_MESSAGE + encodedBytes.toString();
+                    byteBuffer.put(response_to_encode.getBytes(StandardCharsets.UTF_8));
+                } catch (final IOException e) {
+                    System.err.println("Unable to encode data with gzip encoder: " + e.getMessage());
+                }
             } else {
-                response_to_encode = PLAIN_TEXT_RESPONSE + response.length() + END_OF_MESSAGE + response;
+                final var response_to_encode = PLAIN_TEXT_RESPONSE + response.length() + END_OF_MESSAGE + response;
+                byteBuffer.put(response_to_encode.getBytes(StandardCharsets.UTF_8));
             }
-            byteBuffer.put(response_to_encode.getBytes(StandardCharsets.UTF_8));
         } else {
             byteBuffer.put(OK_RESPONSE_TERMINATION_BYTES);
         }
