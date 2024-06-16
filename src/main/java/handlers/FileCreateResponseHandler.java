@@ -1,5 +1,7 @@
 package handlers;
 
+import utils.HandlerTools;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -34,15 +36,15 @@ public final class FileCreateResponseHandler implements ResponseHandler{
                         new FileWriteHandler(byteBuffer, clientChannel, fileChannel));
             } catch (final Exception e) {
                 System.err.println("Error opening file: " + e.getMessage());
-                byteBuffer.put(NOT_FOUND_BYTES);
-                byteBuffer.flip();
-                clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
+                handleErrorCase(clientChannel, byteBuffer);
             }
         } else {
-            byteBuffer.put(NOT_FOUND_BYTES);
-            byteBuffer.flip();
-            clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));;
+            handleErrorCase(clientChannel, byteBuffer);
         }
+    }
 
+    private void handleErrorCase(final AsynchronousSocketChannel clientChannel, final ByteBuffer byteBuffer) {
+        byteBuffer.put(NOT_FOUND_BYTES);
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
     }
 }

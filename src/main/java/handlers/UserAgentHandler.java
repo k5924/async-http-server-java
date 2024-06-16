@@ -1,5 +1,7 @@
 package handlers;
 
+import utils.HandlerTools;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +24,6 @@ public final class UserAgentHandler implements ResponseHandler{
         } else {
             byteBuffer.put(OK_RESPONSE_TERMINATION_BYTES);
         }
-        byteBuffer.flip();
-        clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
     }
 }

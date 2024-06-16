@@ -1,5 +1,7 @@
 package handlers;
 
+import utils.HandlerTools;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -10,7 +12,6 @@ public final class NotFoundHandler implements ResponseHandler{
     @Override
     public void writeResponse(final AsynchronousSocketChannel clientChannel, final ByteBuffer byteBuffer) {
         byteBuffer.put(NOT_FOUND_BYTES);
-        byteBuffer.flip();
-        clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
     }
 }

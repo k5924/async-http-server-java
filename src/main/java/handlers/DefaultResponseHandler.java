@@ -1,5 +1,7 @@
 package handlers;
 
+import utils.HandlerTools;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -11,7 +13,6 @@ public final class DefaultResponseHandler implements ResponseHandler{
                               final ByteBuffer byteBuffer) {
 
         byteBuffer.put(OK_RESPONSE_TERMINATION_BYTES);
-        byteBuffer.flip();
-        clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
     }
 }

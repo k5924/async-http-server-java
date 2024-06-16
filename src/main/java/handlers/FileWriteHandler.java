@@ -1,5 +1,7 @@
 package handlers;
 
+import utils.HandlerTools;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
@@ -27,21 +29,18 @@ public final class FileWriteHandler implements CompletionHandler<Integer, Void> 
     @Override
     public void completed(final Integer result, final Void attachment) {
         byteBuffer.put(CREATED_RESPONSE.getBytes(StandardCharsets.UTF_8));
-        byteBuffer.flip();
-        clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
-        try {
-            fileChannel.close();
-        } catch (final IOException e) {
-            System.err.println("Failed to close file channel: " + e.getMessage());
-        }
+        finishHandler();
     }
 
     @Override
     public void failed(Throwable exc, Void attachment) {
         System.err.println("Failed to write file: " + exc.getMessage());
         byteBuffer.put(NOT_FOUND_BYTES);
-        byteBuffer.flip();
-        clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
+        finishHandler();
+    }
+
+    private void finishHandler() {
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
         try {
             fileChannel.close();
         } catch (final IOException e) {

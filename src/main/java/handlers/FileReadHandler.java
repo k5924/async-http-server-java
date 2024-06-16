@@ -1,5 +1,7 @@
 package handlers;
 
+import utils.HandlerTools;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -31,21 +33,18 @@ public final class FileReadHandler implements CompletionHandler<Integer, Void> {
         final var response = FILE_RESPONSE + result + END_OF_MESSAGE;
         byteBuffer.put(response.getBytes(StandardCharsets.UTF_8));
         byteBuffer.put(fileBuffer);
-        byteBuffer.flip();
-        clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
-        try {
-            fileChannel.close();
-        } catch (Exception e) {
-            System.err.println("Failed to close file channel: " + e.getMessage());
-        }
+        finishHandler();
     }
 
     @Override
     public void failed(final Throwable exc, final Void attachment) {
         System.err.println("Failed to read file: " + exc.getMessage());
         byteBuffer.put(NOT_FOUND_BYTES);
-        byteBuffer.flip();
-        clientChannel.write(byteBuffer, null, new FinishedHandler(clientChannel, byteBuffer));
+        finishHandler();
+    }
+
+    public void finishHandler() {
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
         try {
             fileChannel.close();
         } catch (Exception e) {
