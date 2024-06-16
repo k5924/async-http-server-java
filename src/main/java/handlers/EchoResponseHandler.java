@@ -1,5 +1,6 @@
 package handlers;
 
+import utils.BufferPool;
 import utils.HandlerTools;
 
 import java.io.ByteArrayOutputStream;
@@ -16,10 +17,12 @@ public final class EchoResponseHandler implements ResponseHandler{
 
     private final String uri;
     private final String encoding;
+    private final BufferPool bufferPool;
 
-    public EchoResponseHandler(final String uri, final String encoding) {
+    public EchoResponseHandler(final String uri, final String encoding, final BufferPool bufferPool) {
         this.uri = uri;
         this.encoding = encoding;
+        this.bufferPool = bufferPool;
     }
 
     @Override
@@ -49,7 +52,7 @@ public final class EchoResponseHandler implements ResponseHandler{
         } else {
             byteBuffer.put(OK_RESPONSE_TERMINATION_BYTES);
         }
-        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer, bufferPool);
     }
 
     private void encodeMessageNormally(final String response, final ByteBuffer buffer) {

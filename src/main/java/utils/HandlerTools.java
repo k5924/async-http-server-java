@@ -11,8 +11,9 @@ public final class HandlerTools {
 
     }
 
-    public static void cleanupConnection(final AsynchronousSocketChannel clientChannel, final ByteBuffer buffer) {
+    public static void cleanupConnection(final AsynchronousSocketChannel clientChannel, final ByteBuffer buffer,
+                                         final BufferPool bufferPool) {
         buffer.flip();
-        clientChannel.write(buffer, null, new FinishedHandler(clientChannel, buffer));
+        clientChannel.write(buffer, null, new FinishedHandler(clientChannel, buffer, bufferPool));
     }
 }

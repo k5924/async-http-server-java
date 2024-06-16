@@ -1,5 +1,6 @@
 package handlers;
 
+import utils.BufferPool;
 import utils.HandlerTools;
 
 import java.io.IOException;
@@ -17,13 +18,16 @@ public final class FileWriteHandler implements CompletionHandler<Integer, Void> 
     private final ByteBuffer byteBuffer;
     private final AsynchronousSocketChannel clientChannel;
     private final AsynchronousFileChannel fileChannel;
+    private final BufferPool bufferPool;
 
     public FileWriteHandler(final ByteBuffer byteBuffer,
                             final AsynchronousSocketChannel clientChannel,
-                            final AsynchronousFileChannel fileChannel) {
+                            final AsynchronousFileChannel fileChannel,
+                            final BufferPool bufferPool) {
         this.byteBuffer = byteBuffer;
         this.clientChannel = clientChannel;
         this.fileChannel = fileChannel;
+        this.bufferPool = bufferPool;
     }
 
     @Override
@@ -40,7 +44,7 @@ public final class FileWriteHandler implements CompletionHandler<Integer, Void> 
     }
 
     private void finishHandler() {
-        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer, bufferPool);
         try {
             fileChannel.close();
         } catch (final IOException e) {

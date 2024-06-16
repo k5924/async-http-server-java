@@ -1,5 +1,6 @@
 package handlers;
 
+import utils.BufferPool;
 import utils.HandlerTools;
 
 import java.nio.ByteBuffer;
@@ -16,15 +17,18 @@ public final class FileReadHandler implements CompletionHandler<Integer, Void> {
     private final ByteBuffer byteBuffer;
     private final AsynchronousSocketChannel clientChannel;
     private final AsynchronousFileChannel fileChannel;
+    private final BufferPool bufferPool;
 
     public FileReadHandler(final ByteBuffer fileBuffer,
                            final ByteBuffer byteBuffer,
                            final AsynchronousSocketChannel clientChannel,
-                           final AsynchronousFileChannel fileChannel) {
+                           final AsynchronousFileChannel fileChannel,
+                           final BufferPool bufferPool) {
         this.fileBuffer = fileBuffer;
         this.byteBuffer = byteBuffer;
         this.clientChannel = clientChannel;
         this.fileChannel = fileChannel;
+        this.bufferPool = bufferPool;
     }
 
     @Override
@@ -44,7 +48,12 @@ public final class FileReadHandler implements CompletionHandler<Integer, Void> {
     }
 
     public void finishHandler() {
-        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
+        try {
+            bufferPool.returnToPool(fileBuffer);
+        } catch (InterruptedException e) {
+            System.err.println("Failed to return file buffer to pool: " + e.getMessage());
+        }
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer, bufferPool);
         try {
             fileChannel.close();
         } catch (Exception e) {

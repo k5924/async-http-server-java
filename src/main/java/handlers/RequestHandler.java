@@ -1,6 +1,7 @@
 package handlers;
 
 import parser.HttpRequestParser;
+import utils.BufferPool;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -11,13 +12,16 @@ public final class RequestHandler implements CompletionHandler<Integer, Void> {
     private final AsynchronousSocketChannel clientChannel;
     private final ByteBuffer byteBuffer;
     private final HandlerFactory handlerFactory;
+    private final BufferPool bufferPool;
 
     public RequestHandler(final AsynchronousSocketChannel clientChannel,
                           final ByteBuffer byteBuffer,
-                          final HandlerFactory handlerFactory) {
+                          final HandlerFactory handlerFactory,
+                          final BufferPool bufferPool) {
         this.clientChannel = clientChannel;
         this.byteBuffer = byteBuffer;
         this.handlerFactory = handlerFactory;
+        this.bufferPool = bufferPool;
     }
 
     @Override
@@ -43,5 +47,10 @@ public final class RequestHandler implements CompletionHandler<Integer, Void> {
     @Override
     public void failed(Throwable exc, Void attachment) {
         System.err.println("Failed to read request: " + exc.getMessage());
+        try {
+            bufferPool.returnToPool(byteBuffer);
+        } catch (final InterruptedException e) {
+            System.err.println("Unable to return buffer to pool: " + e.getMessage());
+        }
     }
 }

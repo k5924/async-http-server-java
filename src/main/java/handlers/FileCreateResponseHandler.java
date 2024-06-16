@@ -1,5 +1,6 @@
 package handlers;
 
+import utils.BufferPool;
 import utils.HandlerTools;
 
 import java.nio.ByteBuffer;
@@ -15,10 +16,12 @@ public final class FileCreateResponseHandler implements ResponseHandler{
 
     private final String uri;
     private final String body;
+    private final BufferPool bufferPool;
 
-    public FileCreateResponseHandler(final String uri, final String body) {
+    public FileCreateResponseHandler(final String uri, final String body, final BufferPool bufferPool) {
         this.uri = uri;
         this.body = body;
+        this.bufferPool = bufferPool;
     }
 
     @Override
@@ -31,9 +34,10 @@ public final class FileCreateResponseHandler implements ResponseHandler{
             try {
                 final var fileChannel = AsynchronousFileChannel.open(filePath, StandardOpenOption.CREATE,
                         StandardOpenOption.WRITE);
-                final var fileBuffer = ByteBuffer.wrap(body.getBytes(StandardCharsets.UTF_8));
+                final var fileBuffer = bufferPool.getBuffer();
+                fileBuffer.put(body.getBytes(StandardCharsets.UTF_8));
                 fileChannel.write(fileBuffer, 0, null,
-                        new FileWriteHandler(byteBuffer, clientChannel, fileChannel));
+                        new FileWriteHandler(byteBuffer, clientChannel, fileChannel, bufferPool));
             } catch (final Exception e) {
                 System.err.println("Error opening file: " + e.getMessage());
                 handleErrorCase(clientChannel, byteBuffer);
@@ -45,6 +49,6 @@ public final class FileCreateResponseHandler implements ResponseHandler{
 
     private void handleErrorCase(final AsynchronousSocketChannel clientChannel, final ByteBuffer byteBuffer) {
         byteBuffer.put(NOT_FOUND_BYTES);
-        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer, bufferPool);
     }
 }

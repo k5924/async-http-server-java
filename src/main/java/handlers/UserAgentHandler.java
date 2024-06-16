@@ -1,5 +1,6 @@
 package handlers;
 
+import utils.BufferPool;
 import utils.HandlerTools;
 
 import java.nio.ByteBuffer;
@@ -10,9 +11,11 @@ import static utils.Constants.*;
 
 public final class UserAgentHandler implements ResponseHandler{
     private final String userAgent;
+    private final BufferPool bufferPool;
 
-    public UserAgentHandler(final String userAgent) {
+    public UserAgentHandler(final String userAgent, final BufferPool bufferPool) {
         this.userAgent = userAgent;
+        this.bufferPool = bufferPool;
     }
 
     @Override
@@ -24,6 +27,6 @@ public final class UserAgentHandler implements ResponseHandler{
         } else {
             byteBuffer.put(OK_RESPONSE_TERMINATION_BYTES);
         }
-        HandlerTools.cleanupConnection(clientChannel, byteBuffer);
+        HandlerTools.cleanupConnection(clientChannel, byteBuffer, bufferPool);
     }
 }

@@ -1,5 +1,6 @@
 import handlers.AcceptHandler;
 import handlers.HandlerFactory;
+import utils.BufferPool;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,19 +12,22 @@ import java.util.concurrent.TimeUnit;
 public final class Server {
     private final int port;
     private final ExecutorService executorService;
+    private final BufferPool bufferPool;
     private AsynchronousServerSocketChannel serverSocketChannel;
 
-    public Server(final int port) {
+    public Server(final int port,
+                  final BufferPool bufferPool) {
         this.port = port;
         this.executorService = Executors.newSingleThreadExecutor();
+        this.bufferPool = bufferPool;
     }
 
     public void startServer() throws Exception {
-        final var handlerFactory = new HandlerFactory();
+        final var handlerFactory = new HandlerFactory(bufferPool);
         serverSocketChannel = AsynchronousServerSocketChannel.open();
         final var socketAddress = new InetSocketAddress(port);
         serverSocketChannel.bind(socketAddress);
-        serverSocketChannel.accept(null, new AcceptHandler(serverSocketChannel, handlerFactory));
+        serverSocketChannel.accept(null, new AcceptHandler(serverSocketChannel, handlerFactory, bufferPool));
 
         executorService.submit(() -> {
             try {
