@@ -36,6 +36,7 @@ public final class FileCreateResponseHandler implements ResponseHandler{
                         StandardOpenOption.WRITE);
                 final var fileBuffer = bufferPool.getBuffer();
                 fileBuffer.put(body.getBytes(StandardCharsets.UTF_8));
+                fileBuffer.flip();
                 fileChannel.write(fileBuffer, 0, null,
                         new FileWriteHandler(byteBuffer, clientChannel, fileChannel, bufferPool));
             } catch (final Exception e) {
